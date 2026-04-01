@@ -1,0 +1,22 @@
+# Compiled binaries
+collaborative_editor
+server
+
+# Object files
+*.o
+
+# macOS
+.DS_Store
+
+# IDE / Editor
+.vscode/
+*.swp
+*.swo
+*~
+
+# Session files
+sessions.txt
+
+# Node.js
+node_modules/
+.env

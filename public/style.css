@@ -1,0 +1,357 @@
+/* ==========================================================================
+   Google Docs Material Design Aesthetic - Complete CSS
+   ========================================================================== */
+
+:root {
+    --primary-color: #1a73e8; /* Google Docs Blue */
+    --primary-hover: #174ea6; /* Darker Google Blue */
+    --bg-color: #f8f9fa; /* Classic Docs canvas background */
+    --doc-bg: #ffffff; /* White paper */
+    --border-color: #dadce0; /* Google's standard light grey border */
+    --text-color: #202124; /* Material dark grey (almost black) */
+    --text-muted: #5f6368;
+    --menubar-bg: #ffffff; 
+    --selection-color: #e8f0fe; /* Google's light blue hover/selection */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', Arial, sans-serif; 
+}
+
+/* 1. Main Container: Strict Vertical Stacking */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column; /* Stacks children vertically */
+    height: 100vh;
+    overflow: hidden; /* Prevents the whole page from scrolling */
+    margin: 0;
+}
+
+/* ================= THE UNIFIED MENU BAR ================= */
+.app-menubar {
+    flex: 0 0 auto; /* Anchors exactly at the top, no shrinking */
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    height: 64px;
+    background-color: var(--menubar-bg);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 100;
+}
+
+.menubar-left {
+    display: flex;
+    align-items: center;
+}
+
+.doc-title-input {
+    font-size: 18px;
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    color: var(--text-color);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    outline: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    width: 250px;
+}
+
+.doc-title-input:hover {
+    border-color: var(--border-color);
+}
+
+.doc-title-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: inset 0 0 0 1px var(--primary-color);
+}
+
+.menubar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Styled like the Google Docs "Share" button */
+.ai-button {
+    background: #c2e7ff; 
+    color: #001d35;
+    border: none;
+    border-radius: 24px; /* Pill shape */
+    padding: 9px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.ai-button:hover {
+    background: #b1dcfb;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+}
+
+/* ================= TOOLBAR RIBBON ================= */
+.toolbar-ribbon, .ql-toolbar.ql-snow {
+    flex: 0 0 auto; /* Locks it under the menubar */
+    width: 100%;
+    background-color: #f8f9fa; /* Light grey visual separation */
+    border-bottom: 1px solid var(--border-color) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin: 0 !important;
+    padding: 8px 24px !important;
+    display: flex !important;
+    justify-content: center; 
+    align-items: center;
+    gap: 16px; 
+    z-index: 90;
+}
+
+.ql-toolbar.ql-snow .ql-formats {
+    display: flex;
+    align-items: center;
+    padding-right: 16px;
+    margin-right: 0 !important;
+    border-right: 1px solid var(--border-color);
+}
+
+.ql-toolbar.ql-snow .ql-formats:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+.ql-toolbar.ql-snow button, .ql-toolbar.ql-snow .ql-picker {
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+    padding: 4px 6px;
+    color: var(--text-color) !important;
+}
+
+.ql-toolbar.ql-snow button:hover {
+    background-color: #dfe3eb !important;
+}
+
+/* ================= WORKSPACE & CANVAS ================= */
+.workspace {
+    position: relative;
+    flex: 1 1 auto; /* Takes up ALL remaining vertical space */
+    overflow-y: auto; /* Makes the grey area scrollable */
+    background-color: var(--bg-color); 
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the paper horizontally */
+}
+
+.editor-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 32px 24px; /* Creates physical gap between toolbar and paper */
+}
+
+#editor-wrapper {
+    width: 816px; /* standard A4 width approx */
+    background-color: var(--doc-bg);
+    /* Classic Google Docs drop shadow */
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.15), 0 2px 6px 2px rgba(60,64,67,0.15);
+    min-height: 1056px;
+    flex-shrink: 0;
+    margin-bottom: 24px;
+}
+
+#editor {
+    border: none !important;
+    padding: 96px !important; /* Standard 1-inch margins roughly */
+    min-height: 1056px;
+    font-size: 11pt; /* Docs standard */
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+}
+
+.ql-table-insert::before { content: "Table"; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+.ql-table-insert:hover::before { color: var(--text-color); }
+
+/* ================= AI PANEL ================= */
+.ai-slide-panel {
+    position: absolute;
+    top: 0; 
+    right: -420px; 
+    width: 320px; 
+    height: 100%;
+    background-color: var(--doc-bg); 
+    border-left: 1px solid var(--border-color);
+    box-shadow: -2px 0 8px rgba(0,0,0,0.05); 
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    z-index: 50;
+}
+
+.ai-slide-panel.open {
+    right: 0; /* Snaps flush right, like Docs panels */
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h3 {
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Google Sans', Roboto, sans-serif;
+    color: var(--text-color);
+}
+
+#close-ai-panel {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: background-color 0.2s;
+}
+
+#close-ai-panel:hover { background: rgba(95, 99, 104, 0.08); color: var(--text-color); }
+
+/* ================= CONVERSATION THREADS ================= */
+.ai-chat-history {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+    background-color: var(--doc-bg);
+}
+
+.ai-comment-card {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* User bubbles - Light blue background */
+.ai-comment-card.user-card {
+    background-color: var(--selection-color);
+    color: var(--text-color);
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+    max-width: 90%;
+}
+
+/* System bubbles - Clean white with faint border */
+.ai-comment-card.system-card {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    max-width: 95%;
+}
+
+.ai-comment-card.error-card {
+    background-color: #fce8e6;
+    color: #c5221f;
+    border: 1px solid #fad2cf;
+}
+
+.card-content strong { font-weight: 500; }
+.card-content .time { font-size: 11px; color: var(--text-muted); margin-left: 8px; display: block; margin-top: 4px; }
+.card-content p { white-space: pre-wrap; margin-top: 4px; }
+
+/* ================= AI INPUT AREA ================= */
+.ai-input-area {
+    background-color: var(--doc-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ai-input-area textarea {
+    width: 100%;
+    resize: none;
+    height: 60px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    font-family: Roboto, sans-serif;
+}
+
+.ai-input-area textarea:focus { 
+    border-color: var(--primary-color); 
+    box-shadow: inset 0 0 0 1px var(--primary-color);
+}
+
+.ai-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.primary-btn:hover { 
+    background-color: var(--primary-hover); 
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+}
+
+.secondary-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.secondary-btn:hover { background-color: var(--selection-color); }
+
+.primary-btn:disabled, .secondary-btn:disabled {
+    opacity: 0.5; cursor: not-allowed;
+}
+
+/* ================= TOAST NOTIFICATION ================= */
+#sync-status-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    background: #323232;
+    color: #ffffff;
+    padding: 14px 24px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: Roboto, sans-serif;
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+}

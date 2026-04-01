@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Editor Workspace</title>
+    <!-- Quill.js 2.0 CSS for Native Tables -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Quill.js 2.0 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+</head>
+<body>
+
+    <!-- Unified Menu Bar -->
+    <header class="app-menubar">
+        <div class="menubar-left">
+            <input type="text" class="doc-title-input" value="Untitled Document" />
+        </div>
+
+        <div class="menubar-right">
+            <!-- AI Button Placed in Top Bar -->
+            <button id="ai-toggle-btn" class="ai-button">
+                ✨ AI Assistant
+            </button>
+        </div>
+    </header>
+
+    <!-- Toolbar Ribbon Wrapper (Below Title Bar) -->
+    <div class="toolbar-ribbon" id="toolbar-container">
+        <!-- Quill Toolbar Injected Here -->
+    </div>
+
+    <!-- Main Workspace Background -->
+    <main class="workspace">
+        <!-- Document Canvas -->
+        <section class="editor-container">
+            <div id="editor-wrapper">
+                <div id="editor"></div>
+            </div>
+        </section>
+
+        <!-- Right-Hand sliding AI Pane -->
+        <aside class="ai-slide-panel" id="ai-sidebar">
+            <div class="sidebar-header">
+                <h3>✨ DeepSeek Assistant</h3>
+                <button id="close-ai-panel">✕</button>
+            </div>
+            
+            <div class="ai-chat-history" id="ai-response-text">
+                <div class="ai-comment-card system-card">
+                    <div class="card-content">
+                        <strong>AI Assistant</strong> <span class="time">Just now</span>
+                        <p>Hi! How can I modify the document for you?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-input-area">
+                <textarea id="ai-prompt" placeholder="Ask AI... (Press Enter)"></textarea>
+                <div class="ai-actions">
+                    <button id="ai-insert-btn" class="secondary-btn" title="Insert Last Response" disabled>Insert</button>
+                    <button id="send-ai-btn" class="primary-btn">Ask AI</button>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Sync Indicator -->
+    <div id="sync-status-toast">Connected 🟢</div>
+
+    <script src="client.js"></script>
+</body>
+</html>
