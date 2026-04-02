@@ -44,7 +44,7 @@ npm install
 **2. Configure Environment**
 Create a file named `.env` in the root directory and add your DeepSeek API Key:
 ```text
-DEEPSEEK_API_KEY=sk-your-key-here
+DEEPSEEK_API_KEY=[insert api key here]
 ```
 
 ---

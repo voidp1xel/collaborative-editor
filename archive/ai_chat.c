@@ -13,7 +13,7 @@
 #include <curl/curl.h>
 #include <jansson.h>
 
-#define API_URL "sk-89e7da6bc2234725922a941ae738b95c"
+#define API_URL "[insert api key here]"
 #define API_MODEL "deepseek-chat"
 
 // Buffer to accumulate HTTP response data
