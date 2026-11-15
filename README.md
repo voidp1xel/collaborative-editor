@@ -76,7 +76,7 @@
 ```bash
 # 1. Clone the repository
 git clone https://github.com/voidp1xel/collaborative-editor.git
-cd Collab-Edit
+cd collaborative-editor
 
 # 2. Install dependencies
 npm install
@@ -96,7 +96,7 @@ The server listens on **`http://localhost:3000`**. Open multiple browser tabs or
 ## 📁 Repository Structure
 
 ```text
-Collab-Edit/
+collaborative-editor/
 ├── server.js             # Express HTTP server, Socket.IO hub & DeepSeek proxy
 ├── package.json          # Node dependencies & scripts
 ├── .env.example          # Environment variable template
