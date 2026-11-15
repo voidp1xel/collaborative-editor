@@ -1,105 +1,118 @@
-# 📝 CollabEdit
+<div align="center">
+
+# 📝 CollabEdit — Real-Time Collaborative Rich-Text Editor
+
+**A low-latency multi-user document editor powered by Operational Transformation (Quill Deltas), WebSockets, and an integrated AI Writing Assistant.**
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
 ![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-**CollabEdit** is a **Professional-Grade**, real-time collaborative text editor built with **Node.js, Express, Socket.IO, and Quill.js**. This application replicates the core features of premium word processors, including real-time synchronization, rich-text formatting, and an integrated **AI Assistant** using DeepSeek AI.
+> 🚀 **Built for Megathon 2025** — Evolved from a low-level POSIX TCP socket prototype (`archive/`) into a full-featured web-based collaborative document workspace.
 
-> 🚀 **Built for Megathon 2025**
-
----
-
-## ✨ Key Features
-
-- 🤝 **Real-Time Collaboration:** Multiple users can edit the same document simultaneously with near-zero latency using WebSocket synchronization.
-- 🎨 **Bespoke Premium UI:** A clean, high-contrast interface designed for focus. Features a centered A4 canvas, a functional top menu bar, and a dedicated formatting ribbon.
-- ✍️ **Rich Text Formatting:** Full support for Bold, Italics, Underline, Strikethrough, Custom Fonts, Font Sizes, Text Alignment, Lists, Links, Images, and **Dynamic Tables**.
-- 🤖 **✨ AI Writing Assistant:** A toggleable sidebar powered by **DeepSeek AI**. Ask it to generate, summarize, or format text, and insert results directly into your document with one click.
-- 🔒 **Robust Security:** Environment-safe architecture ensures API keys and secrets stay on the backend server, completely hidden from the client browser.
+</div>
 
 ---
 
-## 🏗️ Architecture & Code Details
+## 📌 Overview
 
-The application is structured into a lightweight, high-performance Node.js backend and a responsive Vanilla JS frontend. 
-
-### 🖥️ Backend (`server.js`)
-- **Express.js Server:** Serves static files from the `public/` directory and handles HTTP routes.
-- **WebSocket (Socket.IO):** Manages real-time bi-directional communication.
-  - Listeners are set up for `connection`, `disconnect`, `send-changes`, and `save-document`.
-  - When a user sends changes (`send-changes`), the server broadcasts the delta to all other connected clients using `socket.broadcast.emit()`.
-  - Maintains an in-memory `documentState` to synchronize late-joiners immediately upon connection (`socket.emit('load-document')`).
-- **AI Proxy Route (`/api/chat`):** A dedicated endpoint using `axios` to securely communicate with the DeepSeek API. This ensures the frontend never exposes the secret `DEEPSEEK_API_KEY`.
-
-### 🌐 Frontend (`public/`)
-- **`index.html`:** The core structural template containing the main editor container, a premium formatting toolbar, and the slide-out AI assistant sidebar.
-- **`style.css`:** Material-inspired styling, featuring clean typography, smooth transitions, and a layout that mimics a physical A4 paper on a dark/premium background.
-- **`client.js`:** 
-  - Initializes the **Quill.js** editor instance with specific modules (toolbar, etc.).
-  - Handles WebSocket events. It applies incoming diffs (deltas) seamlessly using Quill's underlying Operation Transform (OT) model.
-  - Manages the logic for sending prompts to the `/api/chat` backend endpoint and feeding the AI responses back into the editor UI.
+**CollabEdit** is a real-time collaborative rich-text editor engineered with **Node.js, Express, Socket.IO, and Quill.js**, featuring an integrated **AI Writing Assistant** powered by the DeepSeek API. Multiple concurrent clients can edit a shared document simultaneously with sub-frame delta propagation, while late-joining peers automatically hydrate from an authoritative server-side document state.
 
 ---
 
-## 🛠️ Prerequisites
+## ✨ Key Engineering Features
 
-Make sure you have the following installed to run this project:
-- **Node.js** (v18 or higher recommended)
+- 🤝 **Real-Time Delta Synchronization (Operational Transformation):** Instead of broadcasting full document snapshots on every keystroke, clients emit compact **Quill Delta** operations (`insert`, `delete`, `retain`) over WebSockets, minimizing network payload size and preventing cursor clobbering.
+- 🔄 **Late-Joiner State Hydration:** The backend maintains an authoritative in-memory `documentState` snapshot so newly connected clients immediately receive the latest document state via the `load-document` event.
+- 🎨 **Desktop-Grade A4 Workspace UI:** High-contrast layout featuring a centered A4 page canvas, top menu bar, formatting ribbon, and slide-out AI drawer.
+- ✍️ **Rich-Text & Dynamic Table Engine:** Supports typography controls, custom fonts, alignments, lists, inline links/media, and dynamic table insertion.
+- 🤖 **Secure Server-Side AI Proxy (`/api/chat`):** Integrates DeepSeek AI for text generation, summarization, and rewriting via a backend Express proxy route, keeping `DEEPSEEK_API_KEY` strictly isolated from client browsers.
+- 🏛️ **Systems Evolution (`archive/`):** Preserves the original multi-threaded **C POSIX TCP socket** client-server prototype in `archive/` (`server.c`, `client.c`) alongside the modern WebSocket architecture.
+
+---
+
+## 🏗️ System Architecture & Data Flow
+
+```text
+┌───────────────────┐     send-changes (Delta)     ┌──────────────────────────┐
+│   Client A (UI)   │ ───────────────────────────► │   Node.js + Socket.IO    │
+│  Quill.js Engine  │ ◄─────────────────────────── │      Backend Server      │
+└───────────────────┘   receive-changes (Delta)    │                          │
+                                                   │  • In-Memory Doc State   │
+┌───────────────────┐     load-document (Init)     │  • Broadcast Multiplexer │
+│   Client B (UI)   │ ◄─────────────────────────── │  • /api/chat AI Proxy    │
+│  Quill.js Engine  │ ───────────────────────────► │             │            │
+└───────────────────┘     POST /api/chat           └─────────────┼────────────┘
+                                                                 │ HTTPS (Bearer)
+                                                                 ▼
+                                                   ┌──────────────────────────┐
+                                                   │     DeepSeek LLM API     │
+                                                   └──────────────────────────┘
+```
+
+### Module Breakdown
+
+| Component | File(s) | Technical Responsibility |
+| :--- | :--- | :--- |
+| **WebSocket & API Server** | `server.js` | Configures Express static serving, manages Socket.IO lifecycle (`connection`, `send-changes`, `save-document`, `disconnect`), caches `documentState`, and proxies `/api/chat` requests via `axios`. |
+| **Client OT & Socket Engine** | `public/client.js` | Initializes the Quill.js editor instance, suppresses echo loops by filtering `"user"` vs `"api"` change sources, applies remote deltas via `quill.updateContents(delta)`, and drives the AI sidebar workflow. |
+| **Workspace UI & Styling** | `public/index.html`, `public/style.css` | Implements the A4 document canvas, formatting toolbar, and responsive AI assistant drawer. |
+| **Legacy C Socket Prototype** | `archive/` | Original C implementation using POSIX `socket()`, `bind()`, `listen()`, and `pthread` concurrency for terminal-based collaborative editing. |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** (v18+ recommended)
 - **npm** (Node Package Manager)
 
----
+### Installation & Local Setup
 
-## 🚀 Setup & Installation
-
-**1. Clone the repository & Install Dependencies**
 ```bash
-git clone <your-repo-url>
-cd "CollabEdit"
+# 1. Clone the repository
+git clone https://github.com/voidp1xel/collaborative-editor.git
+cd Collab-Edit
+
+# 2. Install dependencies
 npm install
-```
 
-**2. Configure Environment Variables**
-Create a file named `.env` in the root directory. You will need a DeepSeek API Key for the AI assistant to function.
-```text
-DEEPSEEK_API_KEY=your_deepseek_api_key_here
-```
+# 3. Configure environment variables
+cp .env.example .env
+# Edit .env and set your DEEPSEEK_API_KEY
 
-**3. Start the Server**
-```bash
+# 4. Start the server
 npm start
 ```
-*The server will start at `http://localhost:3000`.*
 
-**4. Start Testing!**
-- Open `http://localhost:3000` in your primary browser window.
-- Open a second window to test the **Real-Time Collaboration** capabilities.
+The server listens on **`http://localhost:3000`**. Open multiple browser tabs or windows at `http://localhost:3000` to observe real-time multi-client synchronization.
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-.
-├── server.js             # Express API & Socket.IO WebSockets backend
+Collab-Edit/
+├── server.js             # Express HTTP server, Socket.IO hub & DeepSeek proxy
 ├── package.json          # Node dependencies & scripts
-├── .env                  # Secret keys (ignored by git - create yourself)
-├── .gitignore            # Git exclusion rules
-├── public/               # Frontend Assets served statically
-│   ├── index.html        # UI Structure
-│   ├── style.css         # Premium Aesthetics & Layout
-│   └── client.js         # Quill.js setup, Editor Logic & WebSocket handlers
-├── archive/              # (Legacy) Original C source code for historical reference
-└── README.md             # Project documentation (You are here!)
+├── .env.example          # Environment variable template
+├── .gitignore            # Git exclusion rules (.env, node_modules, .DS_Store)
+├── public/               # Static frontend application
+│   ├── index.html        # Document editor shell, ribbon & AI assistant drawer
+│   ├── style.css         # A4 canvas & dark/high-contrast UI styling
+│   └── client.js         # Quill.js Delta handlers, Socket.IO client & AI calls
+├── archive/              # Initial C POSIX TCP socket collaborative prototype
+└── README.md             # Project documentation
 ```
 
 ---
 
 ## © License & Copyright
 
-**Copyright © 2025 Aniket Goel. All Rights Reserved.**
+**Copyright © 2025–2026 Aniket Goel. All Rights Reserved.**
 
-This repository and all its contents (code, design, and assets) are the exclusive property of Aniket Goel. **This is my personal code and it cannot be copied, distributed, modified, or used in any way without my explicit, prior written permission.**
+This repository and all its contents (code, design, and assets) are the exclusive property of Aniket Goel. It may not be copied, distributed, modified, or used in any way without explicit prior written permission.
